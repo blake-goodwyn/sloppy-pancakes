@@ -1,50 +1,53 @@
 # Milestones
 
-## Purpose
+This directory contains milestone implementation plans and issue definitions.
 
-Each milestone folder contains the implementation plan, epic, and issue specs for a development milestone.
-
-## Structure
+## Directory Structure
 
 ```
 milestones/
-├── m0-example/                    # Example milestone
-│   ├── 00-epic.md                 # Milestone epic with acceptance criteria
-│   ├── IMPLEMENTATION_PLAN.md     # Source of truth for progress
-│   └── 01-example-issue.md        # Individual issue spec
-└── m1-your-milestone/             # Your first real milestone
-    ├── 00-epic.md
-    ├── IMPLEMENTATION_PLAN.md
-    └── *.md
+├── README.md                       # This file
+├── IMPLEMENTATION_PLAN_TEMPLATE.md # Template for creating milestone plans
+└── m0/                             # Example: M0 starter milestone
 ```
 
-## Creating a New Milestone
+## Milestone Structure
 
-1. Copy `m0-example/` to `m{n}-{short-name}/`
-2. Update `00-epic.md` with milestone goals and acceptance criteria
-3. Update `IMPLEMENTATION_PLAN.md` with issue list and dependencies
-4. Add issue specs: `{nn}-{short-name}.md`
+Each milestone directory contains:
 
-## Files
+```
+m{n}/
+├── IMPLEMENTATION_PLAN.md       # Source of truth and progress manifest (REQUIRED)
+├── _milestone.md                # Milestone metadata (title, description)
+├── 00-epic.md                   # Epic/tracking issue for the milestone
+├── 01-{short-name}.md           # Individual issues, numbered for ordering
+├── 02-{short-name}.md
+└── ...
+```
 
-### 00-epic.md
-The milestone epic containing:
-- Outcome statement
-- Acceptance criteria
-- Demo script
-- NFR additions
-- Out-of-scope list
+## Implementation Plan
 
-### IMPLEMENTATION_PLAN.md
-The source of truth for milestone progress:
-- Issue list with status
-- Dependencies and phases
-- Open PRs tracking
-- Blocked issues
+**Every milestone must have an `IMPLEMENTATION_PLAN.md` file** that serves as the source of truth and progress manifest.
 
-### Issue Specs ({nn}-{short-name}.md)
-Individual issue specifications:
-- Done definition
-- Implementation notes
-- Test expectations
-- Acceptance criteria
+The Implementation Plan:
+- Tracks issue status (✅ Done, ⛔ Needs Review, ⏭️ Skipped)
+- Lists open PRs and their status
+- Tracks current phase and issue being worked on
+- Documents blocked issues and stop conditions
+- Defines issue dependencies and execution order
+
+**To create a new milestone Implementation Plan:**
+1. Copy `IMPLEMENTATION_PLAN_TEMPLATE.md` to `milestones/m{n}/IMPLEMENTATION_PLAN.md`
+2. Fill in milestone-specific details (title, issues, phases, etc.)
+3. The plan will be automatically updated by workflow tools (run-milestone command/skill)
+
+All workflow tools (run-milestone command, Claude skill, automation scripts) use this file to:
+- Determine which issue to work on next
+- Track progress and status
+- Update issue completion status
+- Manage dependencies and execution order
+
+## Related Documentation
+
+- [Implementation Workflow](../../guides/implementation-workflow.md) - Daily issue-to-PR workflow
+- [Development Cadence](../../guides/dev-cadence.md) - Team workflow and milestone process

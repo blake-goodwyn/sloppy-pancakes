@@ -6,7 +6,7 @@ This guide provides step-by-step instructions for implementing issues during mil
 
 ## Quick Start
 
-If you have workflow helper scripts, use them to find and start the next issue:
+Use the workflow helper script to find and start the next issue:
 
 ```bash
 # Find and start the next open issue
@@ -19,7 +19,13 @@ python scripts/workflow/next-issue.py --list
 python scripts/workflow/next-issue.py --start 52
 ```
 
-**Note:** If using automation scripts, they typically use `docs/03-build-notes/milestones/m{n}/IMPLEMENTATION_PLAN.md` as the source of truth for milestone progress. This file tracks issue status, dependencies, open PRs, and current progress.
+The script automates:
+- Finding the next open issue
+- Showing acceptance criteria
+- Setting up the correct branch
+- Providing next steps
+
+**Note:** The script and all workflow tools use `docs/03-build-notes/m{n}/IMPLEMENTATION_PLAN.md` as the source of truth for milestone progress. This file tracks issue status, dependencies, open PRs, and current progress.
 
 For detailed manual workflow steps, see the [Daily Implementation Loop](#daily-implementation-loop) section below.
 
@@ -28,7 +34,7 @@ For detailed manual workflow steps, see the [Daily Implementation Loop](#daily-i
 ## Branch Structure
 
 - **Main branch:** `main` (always deployable)
-- **Milestone branch:** `milestone/M{n}-<short-name>` (single integration branch per milestone, e.g., `milestone/m1-feature-name`)
+- **Milestone branch:** `milestone/M{n}-<short-name>` (single integration branch per milestone, e.g., `milestone/m1-deterministic-aoi`)
 - **Feature branches (optional):** `feat/m{n}-{issue-number}-{short-name}` for larger PRs or when working on multiple related issues
 
 ---
@@ -54,7 +60,7 @@ Ensure you're on the correct milestone branch before starting work.
 
 **For larger PRs or when grouping multiple issues:**
 ```bash
-git checkout -b feat/m{n}-{issue-number}-{short-name}
+git checkout -b feat/m1-01-aoi-schemas
 ```
 
 ### 3. Verify Issue Exists
@@ -62,24 +68,24 @@ git checkout -b feat/m{n}-{issue-number}-{short-name}
 Before starting implementation:
 
 ```bash
-# Check if issue exists (adapt to your issue tracking system)
-grep "github_issue:" docs/03-build-notes/milestones/m{n}/{issue-file}.md
+# Check if GitHub issue exists
+grep "github_issue:" docs/03-build-notes/m{n}/{issue-file}.md
 
-# If missing, create issue (adapt to your workflow)
+# If missing, create issue
 ./scripts/push-issues.sh m{n} {issue-file}.md
 
 # Update frontmatter with issue number after creation
-# Edit docs/03-build-notes/milestones/m{n}/{issue-file}.md
+# Edit docs/03-build-notes/m{n}/{issue-file}.md
 # Add: github_issue: {number}
 ```
 
 ### 4. Implement with Tests
 
-- Write code following issue specifications from `docs/03-build-notes/milestones/m{n}/{issue-file}.md`
+- Write code following issue specifications from `docs/03-build-notes/m{n}/{issue-file}.md`
 - Write tests alongside implementation (don't defer testing)
-- Run tests locally: `pytest tests/` (or your test command)
-- Run linter: `ruff check src/` (or your lint command)
-- **Auto-fix lint errors:** `ruff check --fix src/` (or your fix command)
+- Run tests locally: `pytest tests/`
+- Run linter: `ruff check src/`
+- **Auto-fix lint errors:** `ruff check --fix src/` (automatically applied in autopilot mode)
 - Fix any remaining issues before committing
 
 ### 5. Commit Frequently with Clear Messages
@@ -100,13 +106,13 @@ Closes #{issue-number}
 **Example:**
 ```bash
 git add .
-git commit -m "feat(m1): Add feature schemas
+git commit -m "feat(m1): Add AOI Pydantic schemas
 
-Implements issue #01: Define feature schemas
+Implements issue #01: Define AOI Pydantic schemas
 
-- Add CreateRequest, UpdateRequest, ValidateRequest
-- Add Response, ListResponse, ValidationResult
-- Integrate validation logic
+- Add AOICreateRequest, AOIUpdateRequest, AOIValidateRequest
+- Add AOIResponse, AOIListResponse, AOIValidationResult
+- Integrate GeoJSON validation with shapely
 
 Closes #01"
 ```
@@ -125,55 +131,28 @@ Closes #01"
 - Include `Closes #{issue-number}` if PR completes the issue
 - Keep commit messages clear and descriptive
 
-### 5a. Push to Branch Regularly
-
-**After each commit (or every few commits), push to the remote branch:**
-
-```bash
-# For feature branches
-git push origin feat/m{n}-{issue-number}-{short-name}
-
-# For milestone branches (when working directly on milestone)
-git push origin milestone/m{n}-<short-name>
-
-# If branch is already tracking remote, just:
-git push
-```
-
-**Why push regularly:**
-- Backs up your work to remote
-- Makes progress visible to team members
-- Enables collaboration if others need to see your changes
-- Allows CI to run on your commits
-- Prevents loss of work if local machine issues occur
-
-**Best Practice:**
-- Push after every commit or every 2-3 commits
-- Push before switching branches or ending a work session
-- Push immediately after creating a PR to ensure remote branch exists
-
 ### 6. Open PR Early (Draft)
 
 Create a draft PR as soon as you have initial code:
 
 ```bash
 # Push branch
-git push origin feat/m{n}-{issue-number}-{short-name}
+git push origin feat/m1-01-aoi-schemas
 
 # Create draft PR via GitHub CLI
 gh pr create --draft \
-  --title "feat(m{n}): Add feature schemas (#{issue-number})" \
-  --body "Implements issue #{issue-number}: Feature title
+  --title "feat(m1): Add AOI Pydantic schemas (#01)" \
+  --body "Implements issue #01: Define AOI Pydantic schemas
 
 ## Changes
-- Add request/response schemas
-- Integrate validation
+- Add AOI request/response schemas
+- Integrate GeoJSON validation
 
 ## Acceptance Criteria
 - [ ] All schemas importable
-- [ ] Validation works
+- [ ] Geometry validation works
 
-Closes #{issue-number}"
+Closes #01"
 ```
 
 **Or via GitHub Web UI:**
@@ -186,27 +165,25 @@ Closes #{issue-number}"
 
 As you make progress:
 
-1. **Push commits frequently (after each commit or every few commits):**
+1. **Push commits frequently:**
    ```bash
    git push
    ```
 
-   **Note:** Regular pushing ensures your work is backed up, visible to the team, and keeps CI running on the latest changes.
-
 2. **Update PR description with running changelog:**
    ```markdown
    ## Changelog
-   - Added CreateRequest schema
-   - Added Response schema
-   - Integrated validation logic
-   - Added unit tests for validation
+   - Added AOICreateRequest schema
+   - Added AOIResponse schema
+   - Integrated shapely geometry validation
+   - Added unit tests for schema validation
    ```
 
 3. **Mark acceptance criteria as complete:**
    ```markdown
    ## Acceptance Criteria
    - [x] All schemas importable
-   - [x] Validation works
+   - [x] Geometry validation works
    ```
 
 4. **Request review when ready:**
@@ -313,7 +290,7 @@ Closes #XX
 
 **The `IMPLEMENTATION_PLAN.md` file is the authoritative manifest for milestone progress.**
 
-Located at: `docs/03-build-notes/milestones/m{n}/IMPLEMENTATION_PLAN.md`
+Located at: `docs/03-build-notes/m{n}/IMPLEMENTATION_PLAN.md`
 
 This file tracks:
 - Issue status (✅ Done, ⛔ Needs Review, ⏭️ Skipped)
@@ -334,12 +311,12 @@ This file tracks:
 1. **Review the Implementation Plan:**
    ```bash
    # Read the plan to understand current status
-   cat docs/03-build-notes/milestones/m{n}/IMPLEMENTATION_PLAN.md
+   cat docs/03-build-notes/m{n}/IMPLEMENTATION_PLAN.md
    ```
 
 2. **Check if issue exists:**
    ```bash
-   grep "github_issue:" docs/03-build-notes/milestones/m{n}/{issue-file}.md
+   grep "github_issue:" docs/03-build-notes/m{n}/{issue-file}.md
    ```
 
 3. **Create issue if missing:**
@@ -348,7 +325,7 @@ This file tracks:
    ```
 
 4. **Update frontmatter:**
-   - Edit `docs/03-build-notes/milestones/m{n}/{issue-file}.md`
+   - Edit `docs/03-build-notes/m{n}/{issue-file}.md`
    - Add: `github_issue: {number}`
 
 ### During Implementation
@@ -356,7 +333,7 @@ This file tracks:
 - Comment on issue when starting work
 - Update with progress if blocked
 - Link PR to issue: Include `Closes #{issue-number}` in PR description
-- **Update Implementation Plan:** Add PR to "Open PRs" section
+- **Update Implementation Plan:** Add PR to "Open PRs (autopilot)" section
 
 ### After Merge
 
@@ -390,9 +367,9 @@ This file tracks:
 
 - Feature branches: `feat/m{n}-{issue-number}-{short-name}`
 - Examples:
-  - `feat/m1-01-feature-schemas`
-  - `feat/m1-05-feature-endpoint`
-  - `feat/m1-11-13-feature-caching` (multiple issues)
+  - `feat/m1-01-aoi-schemas`
+  - `feat/m1-05-aoi-validate-endpoint`
+  - `feat/m1-11-13-aoi-summary-caching` (multiple issues)
 
 ---
 
@@ -416,24 +393,22 @@ mypy src/
 ### 2. Run Integration Tests
 
 ```bash
-# Start local stack (adapt to your infrastructure)
+# Start local stack
 docker-compose up -d
 
 # Run integration tests
-pytest tests/integration/
+pytest tests/test_integration/
 
-# Run E2E validation (if applicable)
-python scripts/validate.py
+# Run E2E validation
+python scripts/validate_map_flow.py
 ```
 
 ### 3. Verify Acceptance Criteria
 
-- Check epic acceptance criteria (from `docs/03-build-notes/milestones/m{n}/00-epic.md`)
+- Check epic acceptance criteria (from `docs/03-build-notes/m{n}/00-epic.md`)
 - Verify NFR targets met
 - Run demo script
 - Check test coverage
-- **Update epic documentation:** Mark acceptance criteria as complete in `docs/03-build-notes/milestones/m{n}/00-epic.md`
-- **Update implementation plan:** Set status to "Complete" in `docs/03-build-notes/milestones/m{n}/IMPLEMENTATION_PLAN.md`
 
 ### 4. Create Final PR
 
@@ -459,52 +434,10 @@ Completes all {N} M{n} issues and meets all acceptance criteria.
 - Closes #01, #02, #03, ... (all issues)
 ```
 
-### 5. Resolve Merge Conflicts (if any)
-
-If the milestone PR has conflicts:
-```bash
-gh pr checkout {pr-number}
-git fetch origin main
-git merge origin/main
-# Resolve conflicts, then:
-git add .
-git commit -m "Merge main into milestone branch - resolve conflicts"
-git push origin milestone/m{n}-<short-name>
-```
-
-### 6. Merge Milestone PR
+### 5. After Merge
 
 ```bash
-gh pr merge {pr-number} --squash --delete-branch
-```
-
-### 7. Clean Up After Milestone Merge
-
-After the milestone PR is merged to main:
-
-```bash
-# 1. Switch to main and pull latest
-git checkout main
-git pull origin main
-
-# 2. Prune deleted remote branches
-git remote prune origin
-
-# 3. Verify cleanup
-git branch -a | grep -i "m{n}\|milestone"  # Should show no results
-
-# 4. Update any remaining documentation
-git add docs/
-git commit -m "docs(m{n}): Final milestone documentation updates"
-git push origin main
-```
-
-**Note:** Feature branches are automatically deleted when PRs merge (if using `--delete-branch`). The milestone branch is deleted when the milestone PR merges. Use `git remote prune origin` to clean up stale remote tracking references.
-
-### 8. Tag Release and Close Milestone
-
-```bash
-# Tag release (optional)
+# Tag release
 git tag -a v0.{n}.0 -m "M{n}: {Milestone Title}"
 git push origin v0.{n}.0
 
@@ -514,9 +447,114 @@ gh milestone close "M{n} - {Milestone Title}"
 
 ---
 
+## Common Workflows
+
+### Starting a New Issue
+
+```bash
+# 1. Ensure on milestone branch
+git checkout milestone/m1-deterministic-aoi
+git pull origin milestone/m1-deterministic-aoi
+
+# 2. Create feature branch (if needed)
+git checkout -b feat/m1-01-aoi-schemas
+
+# 3. Verify/create issue
+./scripts/push-issues.sh m1 01-aoi-schemas.md
+
+# 4. Start implementing
+# ... write code ...
+
+# 5. Commit
+git add .
+git commit -m "feat(m1): Add AOI Pydantic schemas
+
+Implements issue #01: Define AOI Pydantic schemas
+Closes #01"
+
+# 6. Push and create draft PR
+git push origin feat/m1-01-aoi-schemas
+gh pr create --draft --title "feat(m1): Add AOI Pydantic schemas (#01)"
+```
+
+### Updating an Existing PR
+
+```bash
+# 1. Make changes
+# ... edit files ...
+
+# 2. Test locally
+pytest tests/
+
+# 3. Commit
+git add .
+git commit -m "feat(m1): Add geometry validation tests
+
+- Add unit tests for AOI geometry validation
+- Test invalid geometries are rejected"
+
+# 4. Push (updates existing PR)
+git push
+
+# 5. Update PR description if needed
+gh pr edit {pr-number} --body "Updated description..."
+```
+
+### Fixing Review Comments
+
+```bash
+# 1. Make requested changes
+# ... edit files ...
+
+# 2. Commit fix
+git add .
+git commit -m "fix(m1): Address review comments
+
+- Fix geometry validation edge case
+- Update error messages"
+
+# 3. Push
+git push
+
+# 4. Re-request review (via GitHub UI or comment)
+```
+
+### Merging Multiple Related Issues
+
+```bash
+# 1. Create feature branch for grouped work
+git checkout -b feat/m1-11-13-aoi-summary-caching
+
+# 2. Implement all related issues
+# ... implement issue 11, 12, 13 ...
+
+# 3. Commit with references to all issues
+git commit -m "feat(m1): Implement AOI summary with caching
+
+Implements issues #11, #12, #13:
+- Add summary endpoint
+- Add preview endpoint
+- Add caching layer
+
+Closes #11
+Closes #12
+Closes #13"
+
+# 4. Create PR referencing all issues
+gh pr create --draft \
+  --title "feat(m1): AOI summary with caching (#11, #12, #13)" \
+  --body "Implements issues #11, #12, #13
+
+Closes #11
+Closes #12
+Closes #13"
+```
+
+---
+
 ## Autopilot Workflow Stop Conditions
 
-When using automated workflow tools, stop conditions are categorized as:
+When using the `run-milestone` autopilot workflow, stop conditions are categorized as:
 
 ### Hard Stops (Require User Attention)
 These pause the workflow and require manual review:
@@ -527,7 +565,7 @@ These pause the workflow and require manual review:
 
 ### Soft Stops (Skip Automatically)
 These skip the current issue and continue to the next:
-- **Test/Lint/Typecheck Failures:** Auto-fix attempted, then skip if still failing
+- **Test/Lint/Typecheck Failures:** Auto-fix attempted (`ruff check --fix src/`), then skip if still failing
 - **Large Diff:** >8 files or >400 lines changed - skip with warning
 - **Merge Conflicts:** Skip to next issue automatically
 
@@ -551,7 +589,7 @@ For manual workflows, these conditions should still be addressed, but in autopil
 3. **Fix issues and push:**
    ```bash
    git add .
-   git commit -m "fix(m{n}): Fix CI failures"
+   git commit -m "fix(m1): Fix CI failures"
    git push
    ```
 
@@ -559,14 +597,14 @@ For manual workflows, these conditions should still be addressed, but in autopil
 
 1. **Update local branch:**
    ```bash
-   git checkout milestone/m{n}-<short-name>
-   git pull origin milestone/m{n}-<short-name>
+   git checkout milestone/m1-deterministic-aoi
+   git pull origin milestone/m1-deterministic-aoi
    ```
 
 2. **Rebase feature branch:**
    ```bash
-   git checkout feat/m{n}-{issue-number}-{short-name}
-   git rebase milestone/m{n}-<short-name>
+   git checkout feat/m1-01-aoi-schemas
+   git rebase milestone/m1-deterministic-aoi
    ```
 
 3. **Resolve conflicts:**
@@ -606,7 +644,7 @@ git commit -m "feat(m{n}): Description
 Implements issue #XX
 Closes #XX"
 
-# Push (do this regularly - after each commit or every few commits)
+# Push
 git push origin {branch-name}
 
 # Create draft PR
@@ -619,17 +657,30 @@ git push  # Updates existing PR
 gh pr merge {pr-number} --squash --delete-branch
 ```
 
-### File Locations (Customize for Your Project)
+### File Locations
 
-- Issue definitions: `docs/03-build-notes/milestones/m{n}/`
-- Source code: `src/`
+- Issue definitions: `docs/03-build-notes/m{n}/`
+- Source code: `src/{{PROJECT_SLUG}}/`
 - Tests: `tests/`
-- Migrations: `db/migrations/` (if applicable)
+- Migrations: `alembic/versions/`
 - Scripts: `scripts/`
+
+---
+
+## Workflow Automation
+
+The `scripts/workflow/next-issue.py` script automates the initial steps of the workflow:
+- Finds the next open issue based on priority and dependencies
+- Shows acceptance criteria from the issue file
+- Helps set up the correct branch (milestone or feature branch)
+- Provides next steps for implementation
+
+This is particularly useful when working through a milestone systematically. For manual workflows, follow the steps in the [Daily Implementation Loop](#daily-implementation-loop) section above.
 
 ---
 
 ## Related Documents
 
 - [Development Cadence](dev-cadence.md) - High-level milestone process
-- [Testing Strategy](testing-strategy.md) - Testing guidelines (if available)
+- [Testing Strategy](testing-strategy.md) - Testing guidelines
+- [Setup Guide](setup.md) - Environment setup

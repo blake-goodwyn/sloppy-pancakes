@@ -2,7 +2,7 @@
 name: interview
 description: Conduct an in-depth interview about a feature, spec, or idea to surface non-obvious concerns, edge cases, and tradeoffs. Use when user wants to think through a feature, refine requirements, or explore implementation details.
 version: 1.0.0
-author: Your Team
+author: {{OWNER_NAME}}
 tags: [development, workflow, requirements, specification, design]
 ---
 
@@ -34,16 +34,16 @@ The skill follows this execution pattern:
 
 The skill accepts various input formats:
 
-- **File path:** `docs/03-build-notes/milestones/m{n}/01-{short-name}.md` - Interview about an existing issue spec
+- **File path:** `docs/03-build-notes/m{n}/01-{short-name}.md` - Interview about an existing issue spec
 - **Topic string:** `"user authentication flow"` - Interview about a concept or feature
 - **No argument:** Prompt user for what they want to discuss
 
 ### Path Conventions
 
-If working with issue specs:
-- **Issue spec files:** `docs/03-build-notes/milestones/<milestone>/*.md`
-- **Implementation plans:** `docs/03-build-notes/milestones/<milestone>/IMPLEMENTATION_PLAN.md`
-- **Epic files:** `docs/03-build-notes/milestones/<milestone>/00-epic.md`
+If working with issue specs (uses `Milestone folder:` from CLAUDE.md, default: `docs/03-build-notes/milestones/`):
+- **Issue spec files:** `<milestone-folder>/<milestone>/*.md`
+- **Implementation plans:** `<milestone-folder>/<milestone>/IMPLEMENTATION_PLAN.md`
+- **Epic files:** `<milestone-folder>/<milestone>/00-epic.md`
 
 ## Required Context Files
 
@@ -121,7 +121,7 @@ Follow these principles when asking questions:
 ### 1. Determine Input
 
 1. **If file path provided:**
-   - Read the spec file first
+   - Read the spec file first: `<milestone-folder>/<milestone>/<issue-file>.md`
    - Understand current state, acceptance criteria, and implementation notes
    - Use as starting context for interview
 
@@ -176,11 +176,11 @@ After all areas are explored:
 
 2. **If no file provided:**
    - Offer to create a new issue spec file
-   - Suggest location: `docs/03-build-notes/milestones/<milestone>/<nn>-<short-name>.md`
+   - Suggest location: `docs/03-build-notes/<milestone>/<nn>-<short-name>.md`
    - Or provide summary of findings
 
 3. **Format output:**
-   - Follow issue spec format
+   - Follow issue spec format from `docs/03-build-notes/README.md`
    - Include YAML frontmatter with title and labels
    - Structure with: Done Definition, Implementation Notes, Test Expectations, Acceptance Criteria
 
@@ -190,7 +190,7 @@ After all areas are explored:
 
 **Input:**
 ```
-/interview docs/03-build-notes/milestones/m1/01-user-auth.md
+interview docs/03-build-notes/m3/01-tenant-principal-models.md
 ```
 
 **Process:**
@@ -206,7 +206,7 @@ After all areas are explored:
 
 **Input:**
 ```
-/interview "user session management"
+interview "dataset freshness tracking"
 ```
 
 **Process:**
@@ -216,6 +216,30 @@ After all areas are explored:
 4. Interview about performance (computation cost, caching)
 5. Synthesize findings
 6. Offer to create new issue spec file
+
+### Example 3: Interviewing About Epic
+
+**Input:**
+```
+interview docs/03-build-notes/m4/00-epic.md
+```
+
+**Process:**
+1. Read epic file to understand milestone scope
+2. Interview about high-level architecture
+3. Interview about dependencies between issues
+4. Interview about acceptance criteria and success metrics
+5. Synthesize findings
+6. Offer to refine epic or create detailed issue specs
+
+## Integration with Workflow
+
+This skill integrates with (paths use `Milestone folder:` from CLAUDE.md):
+
+- **Issue Spec Files:** `<milestone-folder>/<milestone>/*.md` - Can read and update issue specs
+- **Implementation Plans:** `<milestone-folder>/<milestone>/IMPLEMENTATION_PLAN.md` - Understands milestone structure
+- **Workflow Guides:** References `docs/guides/implementation-workflow.md` and `docs/guides/dev-cadence.md`
+- **Issue Format:** Follows markdown issue format with YAML frontmatter
 
 ## Limitations
 
@@ -243,3 +267,4 @@ After all areas are explored:
 
 - [Implementation Workflow](../../../docs/guides/implementation-workflow.md) - Daily workflow guide
 - [Development Cadence](../../../docs/guides/dev-cadence.md) - High-level milestone process
+- [Build Notes README](../../../docs/03-build-notes/README.md) - Issue spec format and structure

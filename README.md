@@ -1,124 +1,200 @@
-# Agent-Developed Project Boilerplate
+# Milestone-Dev Boilerplate
 
-This folder contains a skeleton project structure designed for agent-developed projects. It provides the documentation scaffolding, workflow guides, and Claude Code skills needed to run a milestone-driven development workflow with AI agents.
+A reusable boilerplate for milestone-based development with [Claude Code](https://claude.ai/code). Clone, customize, and immediately have an autonomous TDD-enforced development workflow operational for any project.
+
+## What Is This?
+
+This repo provides the **workflow infrastructure** for structured, milestone-based software development powered by Claude Code skills. It includes:
+
+- **7 Claude Code skills** for the full development lifecycle
+- **CLAUDE.md template** with git workflow, TDD enforcement, and documentation standards
+- **Workflow scripts** for issue management and automation
+- **Documentation templates** for milestones, specs, and implementation plans
+- **Setup scripts** for instant customization
+
+**No application code included** — this is framework-agnostic. Works with Python, Node.js, Go, or any stack.
+
+## Quick Start
+
+### 1. Clone
+
+```bash
+git clone https://github.com/YOUR_ORG/milestone-dev-boilerplate.git my-project
+cd my-project
+rm -rf .git && git init
+```
+
+### 2. Run Setup
+
+**Unix/macOS:**
+```bash
+chmod +x setup.sh
+./setup.sh "My Project" "my_project" "my-project" "Your Name" "you@example.com" "org/my-project"
+```
+
+**Windows PowerShell:**
+```powershell
+.\setup.ps1 "My Project" "my_project" "my-project" "Your Name" "you@example.com" "org/my-project"
+```
+
+The setup script replaces all `{{TOKEN}}` placeholders and self-deletes.
+
+### 3. Customize CLAUDE.md
+
+Edit `CLAUDE.md` to add your:
+- Tech stack details
+- Directory structure
+- Development commands
+- Domain-specific patterns
+
+### 4. Start Building
+
+```bash
+# Create your first milestone branch
+git checkout -b milestone/m0-project-bootstrap main
+
+# Run the example milestone
+/run-milestone m0
+
+# Or create a new milestone from scratch
+/create-milestone m1
+```
 
 ## What's Included
 
+### Claude Code Skills
+
+| Skill | Command | Purpose |
+|-------|---------|---------|
+| **Interview** | `/interview` | Explore requirements, surface edge cases and tradeoffs |
+| **Create Milestone** | `/create-milestone m1` | Generate milestone docs (epic, specs, issues, plan) |
+| **Plan Review** | `/plan-review m1` | 5-agent parallel review of plans before execution |
+| **Run Milestone** | `/run-milestone m1` | Automated TDD development with code review |
+| **PR Review** | `/pr-review 123` | Multi-agent code review with confidence scoring |
+| **Systematic Debugging** | `/systematic-debugging` | 4-phase root cause analysis |
+| **Test-Driven Development** | `/test-driven-development` | RED-GREEN-REFACTOR enforcement |
+
+### Workflow Chain
+
 ```
-boilerplate/
-├── README.md                 # This file
-├── CLAUDE.md                 # Claude Code instructions template
+/interview → /create-milestone → /plan-review → /run-milestone → /pr-review
+     │              │                  │                │              │
+  Explore      Generate           Quality gate     Build with     Review
+  requirements  docs & specs      before execution  TDD + review   PRs
+```
+
+### Directory Structure
+
+```
+├── .claude/
+│   ├── settings.local.json        # Pre-approved CLI permissions
+│   └── skills/                    # 7 Claude Code skills
+│       ├── create-milestone/
+│       ├── interview/
+│       ├── plan-review/
+│       ├── pr-review/
+│       ├── run-milestone/
+│       ├── systematic-debugging/
+│       └── test-driven-development/
+│
+├── CLAUDE.md                      # AI instruction template (customize this!)
+│
 ├── docs/
-│   ├── README.md             # Documentation index
-│   ├── 00-context/           # Strategic context (vision, glossary, roadmap)
-│   ├── 01-specs/             # Requirements and specifications
-│   ├── 02-architecture/      # System design templates
-│   ├── 03-build-notes/       # Release docs and milestone tracking
-│   │   ├── milestones/       # Milestone implementation plans
-│   │   ├── releases/         # Release documentation templates
-│   │   └── fixes/            # Hotfix tracking
-│   └── guides/               # Development workflow guides
-└── .claude/
-    └── skills/               # Claude Code custom skills
-        ├── run-milestone/    # Automated milestone execution
-        └── interview/        # Feature interview skill
+│   ├── 00-context/                # Product vision
+│   ├── 01-specs/                  # Technical specifications
+│   ├── 02-architecture/           # Architecture decisions
+│   ├── 03-build-notes/            # Milestones and fixes
+│   │   ├── milestones/
+│   │   │   ├── IMPLEMENTATION_PLAN_TEMPLATE.md
+│   │   │   └── m0/               # Example starter milestone
+│   │   └── fixes/
+│   └── guides/
+│       ├── setup.md               # Getting started guide
+│       ├── implementation-workflow.md  # Daily workflow
+│       └── dev-cadence.md         # Milestone lifecycle
+│
+├── scripts/
+│   ├── push-issues.sh             # Create GitHub issues from specs
+│   └── workflow/
+│       └── next-issue.py          # Find next issue to work on
+│
+├── setup.sh                       # Unix setup (self-deleting)
+├── setup.ps1                      # Windows setup (self-deleting)
+└── .gitignore
 ```
 
-## How to Use
+## Placeholder Tokens
 
-1. **Copy to your project root:**
-   ```bash
-   cp -r boilerplate/* /path/to/your/project/
-   cp -r boilerplate/.claude /path/to/your/project/
-   ```
+The setup scripts replace these tokens across all files:
 
-2. **Customize CLAUDE.md:**
-   - Update project overview section
-   - Add your CLI commands
-   - Define architecture and key modules
-   - Set environment variables
+| Token | Meaning | Example |
+|-------|---------|---------|
+| `{{PROJECT_NAME}}` | Human-readable project name | `My Platform` |
+| `{{PROJECT_SLUG}}` | Python/package name (snake_case) | `my_platform` |
+| `{{PROJECT_SLUG_HYPHEN}}` | Repo/pip name (kebab-case) | `my-platform` |
+| `{{OWNER_NAME}}` | Git author name | `Blake` |
+| `{{OWNER_EMAIL}}` | Git author email | `blake@example.com` |
+| `{{GITHUB_ORG_REPO}}` | GitHub org/repo path | `org/my-platform` |
 
-3. **Fill in docs/00-context/:**
-   - `product-vision.md` - Your product vision
-   - `domain-glossary.md` - Domain-specific terminology
-   - `roadmap.md` - Milestone roadmap
+## Key Features
 
-4. **Create your first milestone:**
-   - Copy `docs/03-build-notes/milestones/m0-example/` to `m1-your-milestone/`
-   - Fill in the epic and implementation plan
-   - Add issue specs for each task
+### TDD Enforcement
+Every implementation follows RED-GREEN-REFACTOR. The `/run-milestone` skill enforces this cycle and catches violations.
 
-5. **Run the workflow:**
-   - Use `/interview` to refine issue specs
-   - Use `/run-milestone m1` to automate implementation
+### Two-Stage Code Review
+1. **Spec Compliance** — Does the implementation match the issue spec exactly?
+2. **Code Quality** — Security, performance, patterns
 
-## Workflow Overview
+### Three Execution Modes
+- **Interactive** (default) — User commands at decision points
+- **Autonomous** (`--autonomous`) — Unattended, auto-fix/skip
+- **Subagent** (`--subagent`) — Fresh agent per issue
 
-This boilerplate supports a **TPM + agent engineer** model:
-
-1. **TPM (you):** Define milestones, break down into issues, review PRs
-2. **Agent (Claude):** Implement issues, create PRs, run tests
-
-### Milestone Lifecycle
-
-1. **Kickoff** - Create epic with acceptance criteria
-2. **Planning** - Break epic into issues, create implementation plan
-3. **Execution** - Agent implements issues one-by-one
-4. **Integration** - Verify all acceptance criteria met
-5. **Release** - Merge to main, tag release
+### Branch Safety
+```
+main (protected — human merge only)
+  ↑ milestone/m{n}-{name} (agent integration)
+    ↑ feat/m{n}-{issue}-{slug} (agent work)
+```
+Agents never target `main` directly. Protected surfaces (auth, CI, migrations) require human review.
 
 ### Stop Conditions
+Hard stops for database changes, sensitive code, and dependency modifications. Soft stops for test failures and large diffs. Kill switch (`panic`) for emergencies.
 
-The workflow respects these safety boundaries:
+## How to Customize
 
-**Hard Stops (require human review):**
-- Database migrations or schema changes
-- Auth, permissions, or billing code changes
-- Dependency or license changes
-- Ambiguous or missing specifications
+### 1. CLAUDE.md
+The most important file. Add your:
+- **Tech stack** — Languages, frameworks, databases
+- **Directory structure** — Your project layout
+- **Development commands** — Build, test, lint commands
+- **Key patterns** — Domain-specific conventions
+- **Environment variables** — Required configuration
 
-**Soft Stops (auto-skip to next issue):**
-- Test failures after attempted fixes
-- Large diffs (>8 files or >400 lines)
-- Merge conflicts
+### 2. Issue Labels
+Create labels for your project:
+```bash
+gh label create "type:feature" --color "0E8A16"
+gh label create "type:bug" --color "D93F0B"
+gh label create "prio:P0" --color "B60205"
+gh label create "prio:P1" --color "FBCA04"
+```
 
-## Customization Checklist
+### 3. CI Pipeline
+Add `.github/workflows/ci.yml` for your stack. The workflow requires CI to pass before merges.
 
-Before using this boilerplate, customize these files:
+### 4. Milestone Content
+The `m0/` example shows the format. Create new milestones with:
+```
+/create-milestone m1
+```
 
-- [ ] `CLAUDE.md` - Project-specific instructions
-- [ ] `docs/00-context/product-vision.md` - Your product vision
-- [ ] `docs/00-context/domain-glossary.md` - Your terminology
-- [ ] `docs/00-context/roadmap.md` - Your milestones
-- [ ] `docs/guides/dev-cadence.md` - Adjust tooling (linters, test runners)
-- [ ] `docs/guides/implementation-workflow.md` - Adjust paths and commands
-- [ ] `.claude/skills/*/SKILL.md` - Update paths if needed
+## Requirements
 
-## Documentation Structure
-
-| Folder | Purpose |
-|--------|---------|
-| `00-context/` | Strategic direction: vision, glossary, roadmap |
-| `01-specs/` | Requirements: PRD, functional/non-functional specs |
-| `02-architecture/` | System design: components, data flow, integrations |
-| `03-build-notes/` | Development tracking: milestones, releases, fixes |
-| `guides/` | Developer workflows: cadence, implementation, testing |
-
-## Skills
-
-### `/run-milestone`
-Automates milestone execution:
-- Reads implementation plan
-- Implements issues sequentially
-- Creates PRs with auto-merge
-- Respects stop conditions
-
-### `/interview`
-Surfaces non-obvious concerns:
-- Probes technical, operational, security areas
-- Identifies edge cases and tradeoffs
-- Refines issue specs before implementation
+- [Claude Code](https://claude.ai/code) CLI
+- [GitHub CLI](https://cli.github.com/) (`gh`) — authenticated
+- Git 2.5+ (for worktree support)
 
 ## License
 
-This boilerplate is provided as-is. Adapt it to your project's needs.
+MIT

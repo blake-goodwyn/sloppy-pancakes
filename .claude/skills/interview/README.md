@@ -1,46 +1,82 @@
 # Interview Skill
 
-Conducts in-depth interviews about features, specs, or ideas to surface non-obvious concerns, edge cases, and tradeoffs.
+This Claude skill conducts in-depth interviews to surface non-obvious concerns, edge cases, and tradeoffs for features, specs, or ideas.
 
-## Usage
+## Quick Start
+
+To use this skill, simply ask Claude:
 
 ```
-/interview                                    # Ask what to discuss
-/interview "user authentication flow"         # Interview about a topic
-/interview docs/03-build-notes/milestones/m1/01-auth.md  # Interview about existing spec
+interview docs/03-build-notes/m3/01-tenant-principal-models.md
 ```
 
-## What It Does
+or
 
-1. Systematically probes key areas:
-   - Technical implementation
-   - UI/UX considerations
-   - Operational concerns
-   - Security and privacy
-   - Performance and scalability
-   - Maintainability
+```
+interview "user authentication flow"
+```
 
-2. Asks thoughtful questions to surface:
-   - Edge cases and failure modes
-   - Tradeoffs and alternatives
-   - Dependencies and integration points
-   - Risks and open questions
+or
 
-3. Synthesizes findings into actionable output
+```
+interview
+```
 
-## When to Use
+(and Claude will ask what you want to discuss)
 
-- Before creating a new issue spec
-- When requirements are unclear
-- To think through implementation details
-- To refine existing specs
+The skill will:
+1. Read the spec/topic (if provided)
+2. Interview you systematically about all relevant areas
+3. Surface edge cases and tradeoffs
+4. Synthesize findings
+5. Offer to create or update issue specs
 
-## Files
+## Skill Structure
 
-- `SKILL.md` - Full skill specification
-- `README.md` - This file
+```
+.claude/skills/interview/
+├── SKILL.md              # Main skill definition
+└── README.md             # This file
+```
+
+## Key Features
+
+- **Systematic Coverage**: Probes technical, operational, security, performance, and maintainability concerns
+- **Deep Exploration**: Goes beyond surface-level questions to uncover edge cases and tradeoffs
+- **Workflow Integration**: Understands issue spec format and milestone structure
+- **Actionable Output**: Can create or update issue specs with refined requirements
+
+## Interview Areas
+
+The skill systematically explores:
+
+- **Technical Implementation**: Architecture, data models, APIs, dependencies
+- **UI/UX Considerations**: User flows, error states, accessibility, edge cases
+- **Operational Concerns**: Monitoring, debugging, rollback, logging, alerting
+- **Security and Privacy**: Auth, data protection, validation, compliance
+- **Performance and Scalability**: Targets, caching, optimization, resource constraints
+- **Maintainability and Extensibility**: Code structure, testing, documentation, future needs
+
+## Integration
+
+This skill integrates with:
+- Issue spec files in `docs/03-build-notes/<milestone>/`
+- Implementation plans for milestone structure
+- Workflow guides for conventions
+- GitHub issue format (YAML frontmatter)
+
+## Use Cases
+
+- **Before creating issue specs**: Interview about a new feature to refine requirements
+- **Refining existing specs**: Interview about an existing issue spec that needs clarification
+- **Exploring ideas**: Interview about a concept before formalizing it
+- **Epic planning**: Interview about milestone scope and dependencies
 
 ## See Also
 
-- [Development Cadence](../../../docs/guides/dev-cadence.md)
 - [Implementation Workflow](../../../docs/guides/implementation-workflow.md)
+- [Development Cadence](../../../docs/guides/dev-cadence.md)
+- [Build Notes README](../../../docs/03-build-notes/README.md) - Issue spec format
+
+
+
